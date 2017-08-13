@@ -1,0 +1,61 @@
+{% extends 'master' %}
+
+{% block content %}
+  <div class="__banner">
+    <div class="banner__inner">
+      <img src="/assets/logo.svg">
+      
+	{{ form.open({url: '/signup', method: 'POST'}) }}
+
+		{{ csrfField }}
+
+		<div class="field">
+
+			{% if errors and errors.username %}
+				{{ form.label('username_err', errors.username) }}
+			{% endif %}
+
+			{{ form.label('username', 'Choose a username') }}
+			{{ form.text('username', userData.username if userData and userData.username else '', {}) }}
+		</div>
+
+		<div class="field">
+
+			{% if errors and errors.email %}
+			  	{{ form.label('email_err', errors.email) }}
+			{% endif %}
+
+			{{ form.label('email', 'Enter email address') }}
+			{{ form.text('email', userData.email if userData and userData.email else '', {}) }}
+		</div>
+
+		<div class="field">
+
+			{% if errors and errors.password %}
+				{{ form.label('password_err', errors.password) }}
+			{% endif %}
+
+			{{ form.label('password', 'Choose a strong password') }}
+			{{ form.password('password') }}
+		</div>
+
+		<div class="field">
+
+			{% if errors and errors.password_confirmation %}
+				{{ form.label('password_confirmation_err', errors.password_confirmation) }}
+			  {{errors.password_confirmation}}
+			{% endif %}
+
+			{{ form.label('password_confirmation', 'Confirm your password') }}
+			{{ form.password('password_confirmation') }}
+		</div>
+
+		<div class="button">
+			{{ form.submit('Register') }}
+		</div>
+
+	{{ form.close() }}
+
+    </div>
+  </div>
+{% endblock %}

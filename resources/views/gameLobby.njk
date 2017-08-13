@@ -1,0 +1,27 @@
+{% extends 'master' %}
+
+{% block content %}
+		<div style = 'display: block'>
+			<a href = '/logout'>log out</a>
+		</div>
+		<div style = 'display: block'>
+			Welcome, {{ user.attributes.username }}
+		</div>
+		<div style = 'display: block'>
+			Game list:
+
+			{% for table in tables %}
+				<div>
+					<a href = '/table/{{ table.id }}'>{{ table.name }}</a>
+				</div>
+			{% endfor %}
+
+		</div>
+
+		<hr>
+
+		<div style = 'display: block'>
+			<a href = '/newtable'>Open new table</a>
+		</div>
+
+{% endblock %}

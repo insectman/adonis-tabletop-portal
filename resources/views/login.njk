@@ -1,0 +1,34 @@
+{% extends 'master' %}
+
+{% block content %}
+  <div class="__banner">
+    <div class="banner__inner">
+      <img src="/assets/logo.svg">
+      
+      {{ form.open({url: '/login', method: 'POST'}) }}
+
+		{{ csrfField }}
+
+			{% if error %}
+				{{ form.label('error', error) }}
+			{% endif %}
+
+			<div class="field">
+				{{ form.label('username', 'Enter your username') }}
+				{{ form.text('username') }}
+			</div>
+
+			<div class="field">
+				{{ form.label('password', 'Enter your password') }}
+				{{ form.password('password') }}
+			</div>
+
+			<div class="button">
+				{{ form.submit('Log In') }}
+			</div>
+
+		{{ form.close() }}
+
+    </div>
+  </div>
+{% endblock %}

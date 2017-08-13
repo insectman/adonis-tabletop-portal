@@ -1,0 +1,30 @@
+{% extends 'master' %}
+
+{% block content %}
+		<div style = 'display: block'>
+			<a href = '/logout'>log out</a>
+		</div>
+		<div style = 'display: block'>
+			Welcome, {{ user.attributes.username }}
+		</div>
+
+		{{ form.open({url: '/newtable', method: 'POST'}) }}
+
+			{{ csrfField }}
+
+			{% if error %}
+				{{ form.label('error', error) }}
+			{% endif %}
+
+			<div class="field">
+				{{ form.label('name', 'Enter game name') }}
+				{{ form.text('name') }}
+			</div>
+
+			<div class="button">
+				{{ form.submit('Create') }}
+			</div>
+
+		{{ form.close() }}
+
+{% endblock %}
