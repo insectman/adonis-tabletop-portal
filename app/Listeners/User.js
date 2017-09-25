@@ -10,3 +10,8 @@ User.sendWelcomeEmail = function * (user) {
     message.subject('Welcome to the insbgportal')
   })
 }
+
+
+User.updateStatus = function * (user, table) {
+	console.log('User.updateStatus',user.id,table.id)
+}

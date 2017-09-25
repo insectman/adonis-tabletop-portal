@@ -15,3 +15,20 @@
 */
 
 const Ws = use('Ws')
+
+Ws
+	.channel('lobby', 'LobbyController')
+	//.middleware('auth');
+
+/*
+Ws.channel('lobby', function (socket, request, presence) {
+
+  const user = request.user;
+
+  socket.on('join', function (message) {
+
+
+
+  })
+})
+*/

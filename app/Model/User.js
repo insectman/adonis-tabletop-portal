@@ -29,9 +29,9 @@ class User extends Lucid {
 
 	}
 
-	tables() {
+	table() {
 
-		return this.hasMany('App/Model/Table')
+		return this.belongsTo('App/Model/Table')
 
 	}
 

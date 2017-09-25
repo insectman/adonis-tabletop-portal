@@ -1,9 +1,9 @@
 {% extends 'master' %}
 
 {% block content %}
-		<div style = 'display: block'>
-			<a href = '/logout'>log out</a>
-		</div>
+		
+		{% include "headerLoggedIn.njk" %}
+
 		<div style = 'display: block'>
 			Welcome, {{ user.attributes.username }}
 		</div>

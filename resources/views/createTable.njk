@@ -1,9 +1,11 @@
 {% extends 'master' %}
 
 {% block content %}
-		<div style = 'display: block'>
-			<a href = '/logout'>log out</a>
-		</div>
+		
+		{% include "headerLoggedIn.njk" %}
+
+		{% include "headerLobby.njk" %}
+
 		<div style = 'display: block'>
 			Welcome, {{ user.attributes.username }}
 		</div>
@@ -19,6 +21,11 @@
 			<div class="field">
 				{{ form.label('name', 'Enter game name') }}
 				{{ form.text('name') }}
+			</div>
+
+			<div class="field">
+				{{ form.label('game_id', 'Choose game type') }}
+				{{ form.select('game_id', games) }}
 			</div>
 
 			<div class="button">

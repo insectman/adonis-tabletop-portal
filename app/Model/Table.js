@@ -12,6 +12,17 @@ class Table extends Lucid {
 //	    builder.whereRaw('tokenExpires > NOW()');
 	}
 
+	users() {
+
+		return this.hasMany('App/Model/User')
+
+	}
+
+	game() {
+
+		return this.belongsTo('App/Model/Game')
+
+	}
 }
 
 module.exports = Table
