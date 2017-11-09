@@ -17,18 +17,20 @@
 
 const Route = use('Route')
 
-Route.any('/', 'SiteController.index')
+Route.any('/', 			'SiteController.index')
 
-Route.any('/login', 'SiteController.login')
+Route.any('/login', 	'SiteController.login')
 
-Route.any('/signup', 'SiteController.signup')
+Route.any('/signup', 	'SiteController.signup')
 
-Route.any('/logout', 'SiteController.logout')
+Route.any('/logout', 	'SiteController.logout')
+
+Route.any('/test', 		'SiteController.test')
 
 
 Route.any('/gamelobby', 'LobbyController.list').middleware('isLoggedIn')
 
-Route.any('/newtable', 'LobbyController.create').middleware('isLoggedIn')
+Route.any('/newtable', 	'LobbyController.create').middleware('isLoggedIn')
 
 Route.any('/table/:id', 'LobbyController.table').middleware('isLoggedIn')
 

@@ -92,6 +92,16 @@ class SiteController {
 			return;
 	    }
 
+	    console.log(!!(yield User.findBy('username', userData.username)));
+
+	    if(yield User.findBy('username', userData.username)) {
+	    	yield response.sendView('signup', {
+	    		errors : {
+	    			username : 'User with this name already exists'
+	    		}
+	    		, userData : userData})
+	    }
+
 	    user = yield User.create({
 	    	password : userData.password,
 	    	username : userData.username,
@@ -142,6 +152,13 @@ class SiteController {
 		}
 		
 		response.redirect('/');
+
+	}
+
+	* test (request, response) {
+
+		yield response.sendView('signup')
+		return;
 
 	}
 
