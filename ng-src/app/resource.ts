@@ -1,10 +1,12 @@
-import { IStringStringOrNumberMap } from './helpers';
+import { IStringStringOrNumberMap } from './helper.service';
 
 export class Resource {
   fieldNames: string[];
   fieldsAreSet: boolean;
   id: number | string;
   values: IStringStringOrNumberMap;
+  fetchSuccess: boolean;
+  fetchError: string;
 
   constructor(map: IStringStringOrNumberMap, fields?: string[]) {
     this.values = {};
@@ -20,9 +22,16 @@ export class Resource {
     for (const param in map) {
       if (Object.prototype.hasOwnProperty.call(map, param)) {
         if (this.fieldNames.indexOf(param) !== -1) {
-          this.values[param] = map.param;
+          this.values[param] = map[param];
         }
       }
+    }
+
+    if (Object.keys(this.values).length !== this.fieldNames.length) {
+      this.fetchSuccess = false;
+      this.fetchError = 'some fields are missing from resource';
+    } else {
+      this.fetchSuccess = true;
     }
   }
 

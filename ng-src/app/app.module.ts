@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
@@ -11,6 +11,7 @@ import { UsersComponent } from './users/users.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
+import { HelperService } from './helper.service';
 import { AppRoutingModule } from './/app-routing.module';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
@@ -32,6 +33,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     HttpClientModule,
 
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
@@ -42,7 +44,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
       InMemoryDataService, { dataEncapsulation: false }
     )
   ],
-  providers: [UserService, MessageService],
+  providers: [UserService, MessageService, HelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
