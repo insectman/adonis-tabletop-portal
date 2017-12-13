@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
 import { UserService } from '../user.service';
 import { User } from '../user';
@@ -10,9 +11,10 @@ import { User } from '../user';
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.css']
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent implements OnInit, OnDestroy {
 
   @Input() user: User;
+  private subs: Subscription[];
 
   constructor(
     private route: ActivatedRoute,
@@ -21,13 +23,18 @@ export class UserDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.subs = [];
     this.getOne();
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   getOne(): void {
     const id = +this.route.snapshot.paramMap.get('id');
-    this.userService.getOne(id)
-      .subscribe(user => this.user = user);
+    this.subs.push(this.userService.getOne(id)
+      .subscribe(user => this.user = user));
   }
 
   goBack(): void {
@@ -35,8 +42,8 @@ export class UserDetailComponent implements OnInit {
   }
 
   save(): void {
-    this.userService.updateOne(this.user)
-      .subscribe(() => this.goBack());
+    this.subs.push(this.userService.updateOne(this.user)
+      .subscribe(() => this.goBack()));
   }
 
 }

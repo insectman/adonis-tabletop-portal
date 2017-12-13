@@ -53,11 +53,11 @@ export class DataService {
   }
 
   /** GET resource by id. Will 404 if id not found */
-  getOne(id: number): Observable<Resource> {
+  getOne(id: number|string): Observable<Resource> {
     const url = `${this.dataUrl}/${id}`;
     return this.http.get<IStringStringOrNumberMap>(url)
       .map(e =>  {
-        this.log(`fetched hero id=${id}`);
+        this.log(`fetched user id=${id}`);
         return new Resource(e);
       });
       // .catch(this.handleError<Resource>(`getOne id=${id}`));

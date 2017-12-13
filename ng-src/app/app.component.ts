@@ -1,4 +1,7 @@
-import { Component, OnInit, EventEmitter, ViewChild, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Component, OnInit, EventEmitter, ViewChild, AfterViewInit, QueryList, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/operator/finally';
 
 import { UserLoginComponent } from './user-login/user-login.component';
 import { User } from './user';
@@ -9,46 +12,56 @@ import { UserService } from './user.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit, OnInit {
+export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
 
-  isLoggedIn: boolean;
   title = 'JDTT';
-  currentUser: User;
+  private loadingFinished: boolean;
+  private subs: Subscription[];
 
   @ViewChild(UserLoginComponent) userLoginComponent: UserLoginComponent;
 
   // TODO: replace id with token
   onUserLogin(user: User) {
-    console.log(user, user.id);
+    console.log(user, user.values.id);
     localStorage.setItem('userId', '' + user.values.id);
-    this.isLoggedIn = true;
-    this.currentUser = user;
   }
 
-  constructor(private userService: UserService) {
-    this.isLoggedIn = false;
+  public logout() {
+    localStorage.setItem('userId', null);
+    this.userService.logout();
+    this.router.navigate(['']);
+  }
+
+  constructor(private userService: UserService, private router: Router) {
+    this.loadingFinished = false;
   }
 
   // TODO: replace id with token
   ngOnInit(): void {
+    this.subs = [];
     const userId = localStorage.getItem('userId');
     if (!userId) {
       return;
     }
-    this.userService.getUserByToken(userId)
-      .subscribe(user => {
-        console.log(user);
-        this.isLoggedIn = true;
-      },
+    this.subs.push(this.userService.authenticateByTokenAttempt(userId)
+      .finally(() => this.loadingFinished = true)
+      .subscribe(() => { },
       e => {
-        console.log(e.message);
-      });
+        console.log(e);
+      }));
   }
 
   ngAfterViewInit() {
-    this.userLoginComponent.onUserLogin.subscribe(user => {
+
+    this.subs.push(this.userLoginComponent.onUserLogin.subscribe(user => {
       this.onUserLogin(user);
-    });
+    }));
+
+  }
+
+  ngOnDestroy() {
+    console.log(this.subs);
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
 }

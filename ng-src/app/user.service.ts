@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -13,6 +13,9 @@ import { RemoteFormError } from './remoteFormError';
 @Injectable()
 export class UserService extends DataService {
 
+  public currentUser: User;
+  public isLoggedIn: boolean;
+
   constructor(
     http: HttpClient,
     messageService: MessageService,
@@ -21,22 +24,26 @@ export class UserService extends DataService {
     super(http, messageService, helperService);
     this.dataUrl = 'api/users';
     this.resourceType = 'User';
+    this.isLoggedIn = false;
   }
 
   // TODO: replace id with token
-  public getUserByToken(id: string): Observable<User> {
-    return this.searchResources({
-      'id': id
-    }).map(resources => {
-      if (resources.length === 1) {
-        return new User(resources[0].values);
-      } else if (resources.length === 0) {
-        throw new Error('User not found');
-      } else {
-        throw new Error('Ambigous token');
+  public authenticateByTokenAttempt(id: string): Observable<void> {
+    console.log(id);
+    return this.getOne(id).map(resource => {
+      if (resource) {
+        this.isLoggedIn = true;
+        this.currentUser = new User(resource.values);
       }
     });
   }
+
+
+  public logout() {
+    this.isLoggedIn = false;
+    this.currentUser = null;
+  }
+
 
   public loginAttempt(login: string, password: string): Observable<User> {
     {
@@ -49,7 +56,9 @@ export class UserService extends DataService {
             if (resources[0].values.password !== password) {
               throw new RemoteFormError('Invalid Password', 'password', 'mismatch');
             } else {
-              return new User(resources[0].values);
+              this.currentUser = new User(resources[0].values);
+              this.isLoggedIn = true;
+              return this.currentUser;
             }
           } else if (resources.length === 0) {
             throw new RemoteFormError('User not found', 'login', 'notfound');

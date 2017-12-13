@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { User } from '../user';
 import { UserService } from '../user.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-users',
@@ -8,13 +9,19 @@ import { UserService } from '../user.service';
   styleUrls: ['./users.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
   users: User[];
+  private subs: Subscription[];
 
   constructor(private userService: UserService) { }
 
   ngOnInit() {
+    this.subs = [];
     this.getMany();
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
   /*
@@ -29,13 +36,13 @@ export class UsersComponent implements OnInit {
   */
 
   getMany(): void {
-    this.userService.getMany()
-      .subscribe(users => this.users = users);
+    this.subs.push(this.userService.getMany()
+      .subscribe(users => this.users = users));
   }
 
   delete(user: User): void {
     this.users = this.users.filter(h => h !== user);
-    this.userService.deleteOne(user).subscribe();
+    this.subs.push(this.userService.deleteOne(user).subscribe());
   }
 
 }

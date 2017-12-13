@@ -1,0 +1,13 @@
+<div *ngIf="table">
+  {{table.values.tableName}}
+  <p>Welcome to the {{table.values.gameId}} table, owned by {{table.values.ownerId}}</p>
+  <div>
+    Player list:
+  </div>
+  <div *ngIf="!isCurrentTable">
+    <button (click)="joinTable()">Join</button>
+  </div>
+</div>
+<div *ngIf="!table">
+  Loading...
+</div>

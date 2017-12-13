@@ -1,6 +1,7 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { catchError, map, tap } from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
 
 import { User } from '../user';
 import { UserService } from '../user.service';
@@ -13,11 +14,12 @@ import { RemoteFormError } from '../remoteFormError';
   styleUrls: ['./user-login.component.css'],
   // outputs: ['onUserLogin']
 })
-export class UserLoginComponent implements OnInit {
+export class UserLoginComponent implements OnInit, OnDestroy {
 
   private loginForm: FormGroup;
   private login;
   private password;
+  private subs: Subscription[];
 
   @Output()
   public onUserLogin = new EventEmitter<User>();
@@ -49,8 +51,13 @@ export class UserLoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.userService.loginAttempt(this.login.value, this.password.value)
-      .subscribe(user => { console.log(user); this.onUserLogin.emit(user); },
+    this.subs.push(this.userService.loginAttempt(this.login.value, this.password.value)
+      .subscribe(user => {
+        console.log(user);
+        this.onUserLogin.emit(user);
+        this.loginForm.reset();
+        this.loginForm.markAsPristine();
+      },
       e => {
         if (e.field === 'login') {
           this.password.setErrors({});
@@ -74,10 +81,15 @@ export class UserLoginComponent implements OnInit {
           }
         }
         console.log(e.field, e.type);
-      });
+      }));
   }
 
   ngOnInit(): void {
+    this.subs = [];
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(sub => sub.unsubscribe());
   }
 
 }

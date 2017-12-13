@@ -4,18 +4,23 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 
-import { InMemoryDataService } from './in-memory-data.service';
-import { UserService } from './user.service';
+import { AppRoutingModule } from './/app-routing.module';
 import { AppComponent } from './app.component';
 import { UsersComponent } from './users/users.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MessagesComponent } from './messages/messages.component';
-import { MessageService } from './message.service';
-import { HelperService } from './helper.service';
-import { AppRoutingModule } from './/app-routing.module';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { UserSearchComponent } from './user-search/user-search.component';
+import { TableListComponent } from './table-list/table-list.component';
+import { TableComponent } from './table/table.component';
+import { UserService } from './user.service';
+import { TableService } from './table.service';
+import { GameService } from './game.service';
+import { UserTableService } from './user-table.service';
+import { MessageService } from './message.service';
+import { HelperService } from './helper.service';
+import { InMemoryDataService } from './in-memory-data.service';
 
 
 @NgModule({
@@ -27,7 +32,9 @@ import { UserSearchComponent } from './user-search/user-search.component';
     UserLoginComponent,
     UsersComponent,
     UserDetailComponent,
-    UserSearchComponent
+    UserSearchComponent,
+    TableListComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +51,7 @@ import { UserSearchComponent } from './user-search/user-search.component';
       InMemoryDataService, { dataEncapsulation: false }
     )
   ],
-  providers: [UserService, MessageService, HelperService],
+  providers: [UserService, MessageService, HelperService, TableService, UserTableService, GameService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
