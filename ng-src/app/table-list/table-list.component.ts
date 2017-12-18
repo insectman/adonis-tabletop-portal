@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
+import { Router } from '@angular/router';
 
 import { User } from '../user';
 import { Table } from '../table';
 import { TableService } from '../table.service';
-import { UserTableService } from '../user-table.service';
 import { UserService } from '../user.service';
+import { UserTableService } from '../user-table.service';
+import { RemoteFormError } from '../remoteFormError';
 
 @Component({
   selector: 'app-table-list',
@@ -24,7 +26,10 @@ export class TableListComponent implements OnInit, OnDestroy {
   private gameId: FormControl;
   private tableName: FormControl;
 
-  constructor(private tableService: TableService, private userTableService: UserTableService, private fb: FormBuilder) {
+  constructor(private tableService: TableService,
+    private userTableService: UserTableService,
+    private fb: FormBuilder,
+    private router: Router) {
   }
 
   createForm() {
@@ -41,10 +46,6 @@ export class TableListComponent implements OnInit, OnDestroy {
     Object.defineProperty(TableListComponent.prototype, 'tableName', { get: () => this.tableCreateForm.get('tableName') });
   }
 
-  newTable(gameId, tableName) {
-    this.userTableService.createTable(gameId, tableName);
-  }
-
   ngOnInit() {
     this.subs = [];
     this.createForm();
@@ -57,8 +58,15 @@ export class TableListComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     this.subs.push(this.userTableService.createTable(this.gameId.value, this.tableName.value)
-      .subscribe(table => { console.log(table); },
+      .subscribe(table => { this.router.navigate(['/table/' + table.values.id]); },
       e => {
+        if (!(e instanceof RemoteFormError)) {
+          console.log(e);
+          return;
+        }
+
+        console.log(e.field, e.type);
+
         if (e.field === 'gameId') {
           this.tableName.setErrors({});
           this.tableName.updateValueAndValidity();
@@ -80,7 +88,8 @@ export class TableListComponent implements OnInit, OnDestroy {
               break;
           }
         }
-        console.log(e.field, e.type);
+
+
       }));
   }
 

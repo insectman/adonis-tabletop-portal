@@ -1,11 +1,19 @@
 <div *ngIf="table">
   {{table.values.tableName}}
-  <p>Welcome to the {{table.values.gameId}} table, owned by {{table.values.ownerId}}</p>
+  <p>Welcome to the {{table.gameName}} table, owned by {{table.ownerName}}</p>
   <div>
     Player list:
+    <a *ngFor="let user of table.users" class="col-1-4" routerLink="/user/{{user.values.id}}">
+      <div class="module user">
+        <h4>{{user.values.username}}</h4>
+      </div>
+    </a>
   </div>
-  <div *ngIf="!isCurrentTable">
+  <div *ngIf="!table.isCurrentTable">
     <button (click)="joinTable()">Join</button>
+  </div>
+  <div *ngIf="table.isCurrentTable">
+    <button (click)="leaveTable()">Leave</button>
   </div>
 </div>
 <div *ngIf="!table">

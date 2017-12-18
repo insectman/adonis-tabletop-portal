@@ -40,6 +40,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.subs = [];
     const userId = localStorage.getItem('userId');
+
     if (!userId) {
       return;
     }

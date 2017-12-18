@@ -48,7 +48,13 @@ import { InMemoryDataService } from './in-memory-data.service';
     // Remove it when a real server is ready to receive requests.
 
     HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, { dataEncapsulation: false }
+      InMemoryDataService, {
+        dataEncapsulation: false,
+        delete404: true,
+        post204: false,
+        put204: false,
+        delay: 0
+      }
     )
   ],
   providers: [UserService, MessageService, HelperService, TableService, UserTableService, GameService],

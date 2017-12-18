@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 import { DataService } from './data.service';
 import { MessageService } from './message.service';
 import { User } from './user';
-import { HelperService } from './helper.service';
+import { IStringStringMap, HelperService } from './helper.service';
 import { RemoteFormError } from './remoteFormError';
 
 
@@ -23,13 +23,25 @@ export class UserService extends DataService {
   ) {
     super(http, messageService, helperService);
     this.dataUrl = 'api/users';
-    this.resourceType = 'User';
+    this.resourceClass = User;
     this.isLoggedIn = false;
+  }
+
+  getOne(id: string): Observable<User> {
+    return super.getOne.call(this, id);
+  }
+
+  addOne(dataMap: IStringStringMap): Observable<User> {
+    return super.addOne.call(this, dataMap);
+  }
+
+  searchByIds(ids: (string)[]): Observable<User[]> {
+    return super.searchByIds.call(this, ids);
   }
 
   // TODO: replace id with token
   public authenticateByTokenAttempt(id: string): Observable<void> {
-    console.log(id);
+    // console.log(id);
     return this.getOne(id).map(resource => {
       if (resource) {
         this.isLoggedIn = true;

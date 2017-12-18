@@ -1,9 +1,15 @@
 import { Resource } from './resource';
-import { IStringStringOrNumberMap } from './helper.service';
+import { User } from './user';
+import { IStringStringMap } from './helper.service';
 
 export class Table extends Resource {
 
-  constructor(map: IStringStringOrNumberMap) {
+public users: User[];
+public isCurrentTable: boolean;
+public ownerName: string;
+public gameName: string;
+
+  constructor(map: IStringStringMap) {
 
     super(map, [
       'id',
@@ -11,6 +17,11 @@ export class Table extends Resource {
       'tableName',
       'ownerId'
     ]);
+
+    this.users = [];
+    this.isCurrentTable = false;
+    this.ownerName = '';
+    this.gameName = '';
   }
 
 }

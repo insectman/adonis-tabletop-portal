@@ -1,14 +1,14 @@
-import { IStringStringOrNumberMap } from './helper.service';
+import { IStringStringMap } from './helper.service';
 
 export class Resource {
   fieldNames: string[];
   fieldsAreSet: boolean;
-  id: number | string;
-  values: IStringStringOrNumberMap;
+  // id: string;
+  values: IStringStringMap;
   fetchSuccess: boolean;
   fetchError: string;
 
-  constructor(map: IStringStringOrNumberMap, fields?: string[]) {
+  constructor(map: IStringStringMap, fields?: string[]) {
     this.values = {};
     this.fieldsAreSet = !!fields;
     this.fieldNames = fields;
@@ -22,7 +22,7 @@ export class Resource {
     for (const param in map) {
       if (Object.prototype.hasOwnProperty.call(map, param)) {
         if (this.fieldNames.indexOf(param) !== -1) {
-          this.values[param] = map[param];
+          this.values[param] = '' + map[param];
         }
       }
     }

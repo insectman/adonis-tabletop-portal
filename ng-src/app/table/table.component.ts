@@ -1,4 +1,4 @@
-import { TableService } from './../table.service';
+import { UserTableService } from './../user-table.service';
 import { Table } from './../table';
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -12,23 +12,33 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class TableComponent implements OnInit, OnDestroy {
 
-  table: Table;
+  private table: Table;
   private subs: Subscription[];
-  private isCurrentTable: boolean;
 
-  constructor(private route: ActivatedRoute, private tableService: TableService) { }
+  constructor(private route: ActivatedRoute, private userTableService: UserTableService) {
+    this.subs = [];
+    this.table = null;
+  }
 
   ngOnInit() {
-    this.subs.push(this.route.params.subscribe(params => {
-      this.subs.push(this.tableService.getTableById(params['id'])
+
+    const sub = this.route.params.subscribe(params => {
+
+      const sub2 = this.userTableService.getTableWithUsersById(params['id'])
         .subscribe(table => {
-          console.log(table);
           this.table = table;
+          // console.log(table);
         },
         e => {
-          console.log(e.message);
-        }));
-    }));
+          console.log(e);
+        });
+
+      this.subs.push(sub2);
+
+    });
+
+    this.subs.push(sub);
+
   }
 
   ngOnDestroy() {
@@ -36,7 +46,29 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   joinTable() {
-    // this.tableService.joinTable()
+    // console.log('join');
+    const sub = this.userTableService.joinTable(this.table.values.id).subscribe(
+      r => {
+        this.table = r;
+      },
+      e => console.log(e)
+    );
+
+    this.subs.push(sub);
+
+  }
+
+  leaveTable() {
+
+    const sub = this.userTableService.leaveTable(this.table.values.id).subscribe(
+      r => {
+        this.table = r;
+      },
+      e => console.log(e)
+    );
+
+    this.subs.push(sub);
+
   }
 
 }

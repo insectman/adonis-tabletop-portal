@@ -17,12 +17,12 @@ export class GameService extends DataService {
     helperService: HelperService
   ) {
     super(http, messageService, helperService);
-    this.dataUrl = 'api/tables';
-    this.resourceType = 'Table';
+    this.dataUrl = 'api/games';
+    this.resourceClass = Game;
   }
 
-  public getGameById(id: string): Observable<Game> {
-    return this.getOne(id).map(resource => new Game(resource.values));
+  getOne(id: string): Observable<Game> {
+    return super.getOne.call(this, id);
   }
 
 }

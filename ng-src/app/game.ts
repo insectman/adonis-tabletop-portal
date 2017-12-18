@@ -1,9 +1,9 @@
 import { Resource } from './resource';
-import { IStringStringOrNumberMap } from './helper.service';
+import { IStringStringMap } from './helper.service';
 
 export class Game extends Resource {
 
-  constructor(map: IStringStringOrNumberMap) {
+  constructor(map: IStringStringMap) {
 
     super(map, [
       'id',

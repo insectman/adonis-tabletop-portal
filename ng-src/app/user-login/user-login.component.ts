@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
-import { catchError, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 

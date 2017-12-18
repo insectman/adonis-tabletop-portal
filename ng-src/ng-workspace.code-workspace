@@ -1,8 +1,11 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "C:\\node\\adonis-tabletop-portal\\node_modules\\angular-in-memory-web-api"
+    }
+  ],
 	"settings": {}
 }

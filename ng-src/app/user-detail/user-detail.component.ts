@@ -32,7 +32,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   }
 
   getOne(): void {
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
     this.subs.push(this.userService.getOne(id)
       .subscribe(user => this.user = user));
   }
