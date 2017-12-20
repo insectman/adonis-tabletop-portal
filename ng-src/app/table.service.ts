@@ -33,23 +33,35 @@ export class TableService extends DataService {
     return super.getOne.call(this, id);
   }
 
+  getMany(): Observable<Table[]> {
+    return super.getMany.call(this);
+  }
+
+  searchResources(dataMap: IStringStringMap): Observable<Table[]> {
+    return super.searchResources.call(this, dataMap);
+  }
+
   addOne(dataMap: IStringStringMap): Observable<Table> {
     return super.addOne.call(this, dataMap);
   }
 
-  public getTableList(): Observable<Table[]> {
-    {
+  updateOne(id: string, dataMap: IStringStringMap): Observable<Table> {
+    return super.updateOne.call(this, id, dataMap);
+  }
 
-      return this.getMany().
-        map(resources => {
-          if (resources.length) {
-            return resources.map(resource => new Table(resource.values));
-          } else {
-            return [];
-          }
-        });
-    }
+  public createTable(gameId, tableName, ownerId): Observable<Table> {
+
+    return this.gameService.getOne(gameId).do(game => {
+      if (!game) {
+        throw new RemoteFormError('Game not found', 'gameId', 'notfound');
+      }
+      // console.log(game);
+    })
+      .flatMap(_ => this.addOne({
+        gameId, tableName, ownerId
+      }));
 
   }
 
 }
+

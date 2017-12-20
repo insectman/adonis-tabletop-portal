@@ -42,8 +42,10 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
+    /*
     this.subs.push(this.userService.updateOne(this.user)
       .subscribe(() => this.goBack()));
+      */
   }
 
 }

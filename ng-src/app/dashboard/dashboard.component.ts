@@ -17,7 +17,9 @@ export class DashboardComponent implements OnInit {
   }
 
   getMany(): void {
+    /*
     this.userService.getMany()
       .subscribe(users => this.users = users.slice(1, 5));
+      */
   }
 }

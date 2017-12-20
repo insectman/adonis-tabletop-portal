@@ -25,4 +25,8 @@ export class GameService extends DataService {
     return super.getOne.call(this, id);
   }
 
+  getMany(): Observable<Game[]> {
+    return super.getMany.call(this);
+  }
+
 }

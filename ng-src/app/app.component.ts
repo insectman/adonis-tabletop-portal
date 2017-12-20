@@ -17,12 +17,14 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   title = 'JDTT';
   private loadingFinished: boolean;
   private subs: Subscription[];
+  private currentUser: User;
 
   @ViewChild(UserLoginComponent) userLoginComponent: UserLoginComponent;
 
   // TODO: replace id with token
   onUserLogin(user: User) {
     console.log(user, user.values.id);
+    this.currentUser = user;
     localStorage.setItem('userId', '' + user.values.id);
   }
 
@@ -46,7 +48,9 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.subs.push(this.userService.authenticateByTokenAttempt(userId)
       .finally(() => this.loadingFinished = true)
-      .subscribe(() => { },
+      .subscribe(user => {
+        this.currentUser = user;
+      },
       e => {
         console.log(e);
       }));

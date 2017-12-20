@@ -28,7 +28,7 @@ export class UserSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.users$ = this.searchTerms.pipe(
+    /*this.users$ = this.searchTerms.pipe(
       // wait 300ms after each keystroke before considering the term
       debounceTime(300),
 
@@ -37,6 +37,6 @@ export class UserSearchComponent implements OnInit {
 
       // switch to new search observable each time the term changes
       switchMap((term: string) => this.userService.searchResources({'username' : term})),
-    );
+    );*/
   }
 }

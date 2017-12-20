@@ -21,7 +21,7 @@ import { UserTableService } from './user-table.service';
 import { MessageService } from './message.service';
 import { HelperService } from './helper.service';
 import { InMemoryDataService } from './in-memory-data.service';
-
+import { DataHelperService } from './helpers/data-helper.service';
 
 @NgModule({
   declarations: [
@@ -57,7 +57,8 @@ import { InMemoryDataService } from './in-memory-data.service';
       }
     )
   ],
-  providers: [UserService, MessageService, HelperService, TableService, UserTableService, GameService],
+  providers: [UserService, MessageService, HelperService, TableService,
+    DataHelperService, UserTableService, GameService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

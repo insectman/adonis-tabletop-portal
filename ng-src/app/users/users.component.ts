@@ -36,8 +36,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   */
 
   getMany(): void {
-    this.subs.push(this.userService.getMany()
-      .subscribe(users => this.users = users));
+    /*this.subs.push(this.userService.getMany()
+      .subscribe(users => this.users = users));*/
   }
 
   /*

@@ -1,20 +1,25 @@
 <h3>Table List</h3>
 <div *ngIf="tables" class="grid grid-pad">
-  <a *ngFor="let table of tables" class="col-1-4" routerLink="/table/{{table.values.id}}">
+  <a *ngFor="let table of tables" class="col-1-4" 
+  [ngClass]="{'text-danger': table.values.state=='1'}" routerLink="/table/{{table.values.id}}">
     <div class="module user">
       <h4>{{table.values.tableName}}</h4>
     </div>
   </a>
   <form (ngSubmit)="onSubmit()" [formGroup]="tableCreateForm" novalidate autocomplete="off">
     <div class="form-group">
-      <label for="gameId">Game Id</label>
-      <input type="text" class="form-control" id="gameId" formControlName="gameId" name="gameId">
+      <label for="gameId">Game</label>
+
+      <select class="form-control" formControlName="gameId" name="gameId">
+        <option *ngFor="let game of games" [value]="game.values.id">{{game.values.name}}</option>
+      </select>
+
     </div>
 
     <div *ngIf="gameId.invalid && (gameId.dirty || gameId.touched)" class="alert alert-danger">
 
       <div *ngIf="gameId.errors.required">
-        Game ID is required.
+        Game is required.
       </div>
       <div *ngIf="gameId.errors.notfound" class="error">
         Game not found.

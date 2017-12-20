@@ -10,31 +10,36 @@ import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/finally';
 
 import { DataService } from './data.service';
-import { UserService } from './user.service';
-import { TableService } from './table.service';
+// import { UserService } from './user.service';
+// import { TableService } from './table.service';
 import { MessageService } from './message.service';
 import { GameService } from './game.service';
 import { IStringStringMap, HelperService } from './helper.service';
 import { RemoteFormError } from './remoteFormError';
 // import { MessageService } from './message.service';
-import { User } from './user';
-import { Table } from './table';
 import { UserTable } from './user-table';
 
 
 @Injectable()
 export class UserTableService extends DataService {
 
+  private _currentUser;
+
   constructor(http: HttpClient, messageService: MessageService, helperService: HelperService,
-    private tableService: TableService, private userService: UserService, private gameService: GameService) {
+    /*private tableService: TableService, private userService: UserService,*/
+     private gameService: GameService) {
 
     super(http, messageService, helperService);
     this.dataUrl = 'api/userTables';
     this.resourceClass = UserTable;
   }
 
-  getOne(id: string): Observable<UserTable> {
-    return super.getOne.call(this, id);
+  getOne(userTableId: string): Observable<UserTable> {
+    return super.getOne.call(this, userTableId);
+  }
+
+  searchOne(dataMap: IStringStringMap): Observable<UserTable> {
+    return super.searchOne.call(this, dataMap);
   }
 
   addOne(dataMap: IStringStringMap): Observable<UserTable> {
@@ -42,92 +47,67 @@ export class UserTableService extends DataService {
   }
 
   searchResources(params: IStringStringMap): Observable<UserTable[]> {
-    const userTables = super.searchResources.call(this, params);
+    return super.searchResources.call(this, params);
+  }
 
-    return userTables.map(r => r.sort((e1, e2) => e1.values.timestamp < e2.values.timestamp));
+  deleteOne(userTableId: string): Observable<UserTable> {
+    return super.deleteOne.call(this, userTableId);
+  }
+
+  updateOne(id: string, dataMap: IStringStringMap): Observable<UserTable> {
+    return super.updateOne.call(this, id, dataMap);
+  }
+
+  updateWhere(dataMap: IStringStringMap, updateDataMap: IStringStringMap): Observable<UserTable[]> {
+    return super.updateWhere.call(this, dataMap, updateDataMap);
+  }
+
+  getOrderedUserTablesList(tableId: string): Observable<UserTable[]> {
+
+    return this.searchResources({ tableId }) // .do(r => console.log(r));
+     .map(r => r.sort((e1, e2) => e1.values.timestamp > e2.values.timestamp ? 1 : -1));
+  }
+
+  getUserTablesByTableId(tableId: string): Observable<UserTable[]> {
+    return this.searchResources({ tableId });
+  }
+
+  toggleUserTableReadyState(dataMap): Observable<UserTable> {
+
+    return this.searchOne(dataMap)
+      .flatMap(userTable =>  {
+        // console.log(userTable);
+        const isReady = userTable.values.isReady === '1' ? '0' : '1';
+        return this.updateOne(userTable.values.id, {isReady} );
+      });
 
   }
 
-  public joinTable(tableId: string): Observable<Table> {
-    const dataMap = {
-      tableId,
-      userId: this.userService.currentUser.values.id,
-      timestamp: '' + new Date().getTime()
-    };
-
-    return this.searchResources(dataMap).map(resources => {
-      // console.log(resources);
-      if (resources && resources.length) {
-        throw new Error('User have already joined the table');
-      }
-    })
-      .flatMap(_ => this.addOne(dataMap)
-        .map(resource => {
-          // console.log(resource);
-          if (!resource) {
-            throw new Error('Could not join table');
-          }
-        }))
-      .flatMap(_ => this.getTableWithUsersById(tableId));
-
-  }
-
-  //  public leaveTable(tableId: string): Observable<string> {
-  public leaveTable(tableId: string): Observable<Table> {
-    const dataMap = { tableId, userId: this.userService.currentUser.values.id };
-
-    return this.searchResources(dataMap).map(resources => {
-      if (!resources || !resources.length) {
-        throw new Error('User have already left the table');
-      }
-      return resources[0].values.id;
-    })
-      .flatMap(utid => this.deleteOne(utid))
-      .flatMap(_ => this.getTableWithUsersById(tableId));
-
-  }
-
-  public getJoinedUsers(tableId: string): Observable<User[]> {
-    return this.searchResources({ tableId })
-      .map(resources => resources.map(e => e.values.userId))
-      // .filter(u => !!u.length)
-      .flatMap(uids => this.userService.searchByIds(uids));
-  }
-
-  public createTable(gameId, tableName): Observable<Table> {
-
-    return this.gameService.getOne(gameId).do(game => {
-      if (!game) {
-        throw new RemoteFormError('Game not found', 'gameId', 'notfound');
-      }
-      // console.log(game);
-      // console.log(this.userService.currentUser);
-    })
-      .flatMap(_ => this.tableService.addOne({
-        gameId, tableName, ownerId: this.userService.currentUser.values.id
-      }))
-      .do(t => console.log(t))
-      .flatMap(table => this.joinTable(table.values.id)
-        .map(_ => { console.log(table); return table; }));
-    // .catch((e, o) => { console.log(e.toString()); return o; });
-
-  }
-
-  public getTableWithUsersById(id: string): Observable<Table> {
-    return this.tableService.getOne(id).do(resource => {
+  /*
+  public getTableWithUsersById(tableId: string): Observable<Table> {
+    return this.tableService.getOne(tableId).do(resource => {
       if (!resource) {
         throw new Error('Table not found');
       }
     })
-      .flatMap(table => this.getJoinedUsers(table.values.id)
-        .map(users => {
-          if (users) {
-            table.users = users;
-            table.isCurrentTable = users.some(user =>
-              user.values.id === this.userService.currentUser.values.id);
-          }
-          return table;
-        }))
+      .flatMap(table => this.searchResources({ tableId })
+        .map(userTables => {
+          const currentUserAtTable = userTables.find(userTable =>
+            userTable.values.userId === this.userService.currentUser.values.id);
+          table.isCurrentTable = !!currentUserAtTable;
+          return userTables;
+        })
+        .flatMap(uTs => this.userService.searchByIds(uTs.map(e => e.values.userId))
+          .map(users => {
+            if (users) {
+              console.log(uTs, users);
+              users.forEach((user, index) => user.isReady = !!+uTs[index].values.isReady);
+              console.log(users);
+              table.users = users;
+            }
+            return table;
+          })
+        ))
       .flatMap(table => this.gameService.getOne(table.values.gameId).map(game => {
         if (!game) {
           throw new Error('Game not found');
@@ -141,6 +121,7 @@ export class UserTableService extends DataService {
 
         if (owner) {
           table.ownerName = owner.values.username;
+          table.isOwnedByMe = owner.values.id === this.userService.currentUser.values.id;
           return of(table);
         }
 
@@ -149,9 +130,18 @@ export class UserTableService extends DataService {
             throw new Error('Table owner not found');
           }
           table.ownerName = user.values.username;
+          table.isOwnedByMe = user.values.id === this.userService.currentUser.values.id;
           return table;
         });
       });
   }
+*/
+/*
+  public setUserTableReadyState(userTableId: string, isReady: string): Observable<UserTable> {
+    return this.getOne(userTableId)
+      .flatMap(userTable => this.updateOne(userTable.values.id,
+        { ...userTable.values, isReady }));
+  }
+  */
 
 }

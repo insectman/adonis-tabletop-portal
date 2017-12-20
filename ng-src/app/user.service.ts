@@ -35,17 +35,19 @@ export class UserService extends DataService {
     return super.addOne.call(this, dataMap);
   }
 
-  searchByIds(ids: (string)[]): Observable<User[]> {
+  searchByIds(ids: string[]): Observable<User[]> {
+    // console.log(ids);
     return super.searchByIds.call(this, ids);
   }
 
   // TODO: replace id with token
-  public authenticateByTokenAttempt(id: string): Observable<void> {
+  public authenticateByTokenAttempt(id: string): Observable<User> {
     // console.log(id);
     return this.getOne(id).map(resource => {
       if (resource) {
         this.isLoggedIn = true;
         this.currentUser = new User(resource.values);
+        return this.currentUser;
       }
     });
   }
